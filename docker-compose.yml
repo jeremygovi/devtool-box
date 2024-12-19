@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  devtoolbox:
+    build: .
+    container_name: devtoolbox
+    environment:
+      - VITE_APP_VERSION=1
+    ports:
+      - "3000:3000"
+    volumes:
+      - ~/.kube:/root/.kube
+      - ~/.aws:/root/.aws
