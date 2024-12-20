@@ -51,7 +51,7 @@ COPY image_resources/.p10k.zsh /root/.p10k.zsh
 WORKDIR /app
 
 # Copy application files
-COPY package*.json tsconfig.json tsconfig.app.json ./
+COPY package*.json tsconfig*.json vite.config.ts postcss.config.js tailwind.config.js ./
 
 ENV PATH /app/node_modules/.bin:$PATH
 
