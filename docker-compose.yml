@@ -5,7 +5,7 @@ services:
     build: .
     container_name: devtoolbox
     environment:
-      - VITE_APP_VERSION=1
+      - APP_VERSION=1
     ports:
       - "3000:3000"
     volumes:

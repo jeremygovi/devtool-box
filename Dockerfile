@@ -48,19 +48,12 @@ COPY image_resources/.zshrc /root/.zshrc
 COPY image_resources/.p10k.zsh /root/.p10k.zsh
 
 # Set up working directory
-WORKDIR /app
+WORKDIR /app/scripts
 
-# Copy application files
-COPY package*.json tsconfig*.json vite.config.ts postcss.config.js tailwind.config.js ./
+COPY scripts .
 
-ENV PATH /app/node_modules/.bin:$PATH
-
-RUN npm install
-
-COPY . .
-
-# Build the application
-RUN npm run build
+# Install Python dependencies
+RUN pip3 install --break-system-packages -r requirements.txt
 
 # Expose port for web interface
 EXPOSE 3000
@@ -69,4 +62,4 @@ EXPOSE 3000
 SHELL ["/bin/zsh", "-c"]
 
 # Start command
-CMD ["npm", "start"]
+CMD ["python3", "server.py"]

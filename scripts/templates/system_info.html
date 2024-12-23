@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}System Info{% endblock %}
+
+{% block content %}
+<h1 class="text-4xl text-center font-extrabold text-white mb-8">System Information</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-xl font-semibold text-indigo-400">Hostname</h2>
+        <p class="text-lg">{{ hostname }}</p>
+    </div>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-xl font-semibold text-indigo-400">Platform</h2>
+        <p class="text-lg">{{ platform }}</p>
+    </div>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-xl font-semibold text-indigo-400">Architecture</h2>
+        <p class="text-lg">{{ arch }}</p>
+    </div>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-xl font-semibold text-indigo-400">CPU Usage</h2>
+        <p class="text-lg">{{ cpuUsage }}%</p>
+    </div>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-xl font-semibold text-indigo-400">Memory Usage</h2>
+        <p class="text-lg">Total: {{ memoryUsage.total }} MB</p>
+        <p class="text-lg">Used: {{ memoryUsage.used }} MB</p>
+        <p class="text-lg">Free: {{ memoryUsage.free }} MB</p>
+    </div>
+</div>
+
+<div class="mt-12">
+    <h2 class="text-2xl text-center font-extrabold text-white mb-4">Environment Variables</h2>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <pre class="text-sm text-gray-400 whitespace-pre-wrap">{{ env_vars }}</pre>
+    </div>
+</div>
+{% endblock %}
