@@ -29,7 +29,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           push: true
-          platform: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64
           tags: |
             ${{ github.repository }}:latest
 
@@ -38,7 +38,7 @@ jobs:
         if: github.event_name == 'release'
         with:
           push: true
-          platform: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64
           tags: |
             ${{ github.repository }}:latest
             ${{ github.repository }}:${{ github.ref_name }}
