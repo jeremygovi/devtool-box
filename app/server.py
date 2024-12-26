@@ -88,27 +88,43 @@ def load_script():
 @app.route('/execute-script', methods=['POST'])
 def execute_script():
     data = request.json
-    script_content = data.get('script')
+    script_name = data.get('script_name')  # Récupérer le nom du script
+    script_content = data.get('script')  # Récupérer le contenu du script
 
-    script_path = '/app/temp_script.sh'
+    if not script_name or not script_content:
+        return jsonify({'error': 'Nom du script ou contenu manquant'}), 400
+
+    # Déterminer le chemin temporaire du script
+    script_path = f'/app/temp_{script_name}'
     try:
         # Écrire le contenu du script temporaire
         with open(script_path, 'w') as temp_script:
             temp_script.write(script_content)
 
-        # Rendre le script exécutable
-        os.chmod(script_path, 0o755)
+        # Déterminer l'interpréteur en fonction de l'extension
+        if script_name.endswith('.py'):
+            interpreter = 'python3'
+        elif script_name.endswith('.sh'):
+            interpreter = '/bin/bash'
+        else:
+            return jsonify({'error': f"Extension non prise en charge pour le script : {script_name}"}), 400
+
+        # Rendre le script exécutable pour Bash (non nécessaire pour Python)
+        if interpreter == '/bin/bash':
+            os.chmod(script_path, 0o755)
 
         # Exécuter le script et capturer la sortie
-        result = subprocess.run(['/bin/bash', script_path], capture_output=True, text=True)
+        result = subprocess.run([interpreter, script_path], capture_output=True, text=True)
         output = result.stdout + result.stderr
 
         return jsonify({'output': output})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
+        # Nettoyer le fichier temporaire
         if os.path.exists(script_path):
             os.remove(script_path)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)
