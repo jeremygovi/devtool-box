@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, request
 import os
 import json
 import logging
+import subprocess
 
 app = Flask(__name__)
 
@@ -11,10 +12,6 @@ app.logger.setLevel(logging.INFO) # oui c'est crade, on verra plus tard
 def dashboard():
     app_version = os.getenv('APP_VERSION', 'non défini')
     return render_template('dashboard.html', app_version=app_version)
-
-@app.route('/code-executor')
-def code_executor():
-    return render_template('code_executor.html')
 
 @app.route('/info')
 def system_info():
@@ -69,6 +66,49 @@ def request_info():
 
     # Passer les informations au template
     return render_template('request_info.html', request_data=request_data)
+
+@app.route('/code-executor')
+def code_executor():
+    # Charger les noms des scripts disponibles
+    scripts_dir = '/app/scripts'
+    scripts = [f for f in os.listdir(scripts_dir) if os.path.isfile(os.path.join(scripts_dir, f))]
+    return render_template('code_executor.html', scripts=scripts)
+
+@app.route('/load-script')
+def load_script():
+    script_name = request.args.get('script')
+    script_path = os.path.join('/app/scripts', script_name)
+    try:
+        with open(script_path, 'r') as file:
+            content = file.read()
+        return jsonify({'content': content})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/execute-script', methods=['POST'])
+def execute_script():
+    data = request.json
+    script_content = data.get('script')
+
+    script_path = '/app/temp_script.sh'
+    try:
+        # Écrire le contenu du script temporaire
+        with open(script_path, 'w') as temp_script:
+            temp_script.write(script_content)
+
+        # Rendre le script exécutable
+        os.chmod(script_path, 0o755)
+
+        # Exécuter le script et capturer la sortie
+        result = subprocess.run(['/bin/bash', script_path], capture_output=True, text=True)
+        output = result.stdout + result.stderr
+
+        return jsonify({'output': output})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if os.path.exists(script_path):
+            os.remove(script_path)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)

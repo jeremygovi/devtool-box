@@ -48,9 +48,10 @@ COPY image_resources/.zshrc /root/.zshrc
 COPY image_resources/.p10k.zsh /root/.p10k.zsh
 
 # Set up working directory
-WORKDIR /app/scripts
+WORKDIR /app
 
-COPY scripts .
+COPY app .
+COPY image_resources/scripts scripts
 
 # Install Python dependencies
 RUN pip3 install --break-system-packages -r requirements.txt
